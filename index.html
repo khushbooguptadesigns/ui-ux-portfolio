@@ -349,10 +349,26 @@
       transition: transform 0.5s ease;
     }
     .work-card:hover .work-card-img img { transform: scale(1.05); }
-    .work-card-img-placeholder {
+    .work-card-cover {
       width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 48px;
+      display: flex; flex-direction: column;
+      align-items: flex-start; justify-content: flex-end;
+      padding: 28px 32px; position: relative; overflow: hidden;
+    }
+    .work-card-cover-num {
+      position: absolute; top: -10px; right: 16px;
+      font-size: 120px; font-weight: 900; letter-spacing: -0.05em;
+      color: rgba(255,255,255,0.05); line-height: 1; pointer-events: none;
+      font-family: 'Playfair Display', serif;
+    }
+    .work-card-cover-cat {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45);
+      margin-bottom: 8px;
+    }
+    .work-card-cover-title {
+      font-size: 22px; font-weight: 800; color: rgba(255,255,255,0.85);
+      line-height: 1.2; max-width: 260px;
     }
     .work-card-body { padding: 28px 32px; }
     .work-card-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -537,6 +553,32 @@
     .social-btn:hover { border-color: rgba(255,107,157,0.4); transform: translateY(-2px); }
     .footer-copy { font-size: 13px; color: var(--muted); margin-top: 32px; text-align: center; }
 
+    /* ── MOBILE MENU ── */
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px; background: none; border: none;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--text); border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-menu {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(14,14,14,0.98); backdrop-filter: blur(20px);
+      z-index: 99; flex-direction: column; align-items: center; justify-content: center;
+      gap: 32px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 28px; font-weight: 700; color: var(--text);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--pink); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .hero-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -545,18 +587,32 @@
       .hero-float-card.card1 { left: 0; }
       .hero-float-card.card2 { right: 0; }
       .about-inner { grid-template-columns: 1fr; gap: 48px; }
+      .about-exp-badge { right: 0; }
       .services-grid { grid-template-columns: 1fr; }
       .services-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .services-header .section-sub { text-align: left !important; }
       .work-grid { grid-template-columns: 1fr; }
       .work-card.featured { grid-column: span 1; }
+      .work-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .filter-tabs { flex-wrap: wrap; }
       .process-steps { grid-template-columns: repeat(2, 1fr); }
       .process-steps::before { display: none; }
       .tools-grid { grid-template-columns: repeat(3, 1fr); }
       .testimonials-grid { grid-template-columns: 1fr; }
       .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+      .contact-form { padding: 32px 24px; }
+      .form-row { grid-template-columns: 1fr; }
       .footer-inner { flex-direction: column; gap: 24px; text-align: center; }
       .footer-nav { flex-wrap: wrap; justify-content: center; }
       .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+    }
+    @media (max-width: 480px) {
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-steps { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; }
+      .hero-float-card { display: none; }
     }
   </style>
 </head>
@@ -575,9 +631,22 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
       <a class="btn btn-primary nav-cta" href="#contact">Hire Me</a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" class="mobile-nav-link">About</a>
+  <a href="#services" class="mobile-nav-link">Services</a>
+  <a href="#work" class="mobile-nav-link">Work</a>
+  <a href="#process" class="mobile-nav-link">Process</a>
+  <a href="#contact" class="mobile-nav-link">Contact</a>
+  <a class="btn btn-primary" href="#contact" style="margin-top:8px;">Hire Me</a>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -586,7 +655,7 @@
   <div class="container">
     <div class="hero-inner">
       <div class="hero-content">
-        <div class="hero-badge">AI Driven UX Designer · Open to opportunities</div>
+        <div class="hero-badge">AI Driven UX Designer · Bangalore, India</div>
         <h1 class="hero-heading">
           Designing with<br/>
           <em>intelligence</em> &amp;<br/>
@@ -666,7 +735,7 @@
           <img src="images/about-photo.png" alt="Khushboo Gupta" />
         </div>
         <div class="about-exp-badge">
-          <div class="exp-num">4+</div>
+          <div class="exp-num">5+</div>
           <div class="exp-label">Years of<br/>Experience</div>
         </div>
       </div>
@@ -763,8 +832,8 @@
     </div>
     <div class="work-grid">
 
-      <!-- Featured Project -->
-      <div class="work-card featured">
+      <!-- Featured Project — SoulKart -->
+      <a class="work-card featured" href="https://www.behance.net/khushboo_designs" target="_blank" style="text-decoration:none;color:inherit;">
         <div class="work-card-img">
           <img src="images/app-mockup.png" alt="SoulKart App" style="object-fit:contain;background:linear-gradient(135deg,#1A1A2E,#16213E);" />
         </div>
@@ -781,31 +850,39 @@
           <span class="work-meta">2024–25 · Mobile · UI/UX Design</span>
           <div class="work-arrow">→</div>
         </div>
-      </div>
+      </a>
 
       <!-- Project 2 — Namaste India -->
-      <div class="work-card">
-        <div class="work-card-img work-card-img-placeholder" style="background:linear-gradient(135deg,#1a0611,#4a1028,#1a0611);">
-          🌐
+      <a class="work-card" href="https://www.behance.net/khushboo_designs" target="_blank" style="text-decoration:none;color:inherit;">
+        <div class="work-card-img">
+          <div class="work-card-cover" style="background:linear-gradient(135deg,#2a0a1f,#5a1a3a);">
+            <div class="work-card-cover-num">01</div>
+            <div class="work-card-cover-cat">Web &amp; Mobile · 2024–25</div>
+            <div class="work-card-cover-title">Namaste India</div>
+          </div>
         </div>
         <div class="work-card-body">
           <div class="work-card-tags">
             <span class="work-tag">Web Design</span>
-            <span class="work-tag">Product</span>
+            <span class="work-tag">Product Head</span>
           </div>
           <h3 class="work-card-title">Namaste India — Website &amp; App Redesign</h3>
-          <p class="work-card-desc">Led the full redesign of the company website and mobile app as Product Head Designer. Resulted in a 30% increase in web traffic and 20% uplift in user engagement through improved UX, IA, and visual consistency.</p>
+          <p class="work-card-desc">Led the full redesign of the company website and mobile app. Resulted in a 30% increase in web traffic and 20% uplift in user engagement through improved UX, IA, and visual consistency.</p>
         </div>
         <div class="work-card-footer">
           <span class="work-meta">2024–25 · Web &amp; Mobile · Product Head</span>
           <div class="work-arrow">→</div>
         </div>
-      </div>
+      </a>
 
       <!-- Project 3 — Luppi Handmades -->
-      <div class="work-card">
-        <div class="work-card-img work-card-img-placeholder" style="background:linear-gradient(135deg,#1a0f06,#5c3510,#1a0f06);">
-          🧵
+      <a class="work-card" href="https://www.behance.net/khushboo_designs" target="_blank" style="text-decoration:none;color:inherit;">
+        <div class="work-card-img">
+          <div class="work-card-cover" style="background:linear-gradient(135deg,#1e1208,#4a2e0e);">
+            <div class="work-card-cover-num">02</div>
+            <div class="work-card-cover-cat">Startup · Varanasi</div>
+            <div class="work-card-cover-title">Luppi Handmades</div>
+          </div>
         </div>
         <div class="work-card-body">
           <div class="work-card-tags">
@@ -813,18 +890,22 @@
             <span class="work-tag">Branding</span>
           </div>
           <h3 class="work-card-title">Luppi Handmades — Brand &amp; Product Design</h3>
-          <p class="work-card-desc">Founded and led product design for a handcrafted goods startup in Varanasi. Designed leather, bead, fabric, jute, wood &amp; resin products. Managed packaging design, exhibitions, and marketing campaigns end-to-end.</p>
+          <p class="work-card-desc">Founded and led product design for a handcrafted goods startup. Designed leather, bead, fabric, jute, wood &amp; resin products. Managed packaging, exhibitions, and marketing end-to-end.</p>
         </div>
         <div class="work-card-footer">
           <span class="work-meta">Freelance · Startup · Product &amp; Brand</span>
           <div class="work-arrow">→</div>
         </div>
-      </div>
+      </a>
 
-      <!-- Project 4 — Intercraft & Associates -->
-      <div class="work-card">
-        <div class="work-card-img work-card-img-placeholder" style="background:linear-gradient(135deg,#060f1a,#0d2b45,#060f1a);">
-          🪑
+      <!-- Project 4 — Intercraft -->
+      <a class="work-card" href="https://www.behance.net/khushboo_designs" target="_blank" style="text-decoration:none;color:inherit;">
+        <div class="work-card-img">
+          <div class="work-card-cover" style="background:linear-gradient(135deg,#080f1c,#102040);">
+            <div class="work-card-cover-num">03</div>
+            <div class="work-card-cover-cat">Furniture · Jaipur</div>
+            <div class="work-card-cover-title">Intercraft &amp; Associates</div>
+          </div>
         </div>
         <div class="work-card-body">
           <div class="work-card-tags">
@@ -832,13 +913,13 @@
             <span class="work-tag">3D Modelling</span>
           </div>
           <h3 class="work-card-title">Intercraft — Furniture for Pepperfry &amp; Urban Ladder</h3>
-          <p class="work-card-desc">Designed and developed furniture collections for leading D2C brands Pepperfry and Urban Ladder. Created 2D &amp; 3D product designs in ceramic, brass, wood &amp; fabric — from concept through manufacturing and sampling.</p>
+          <p class="work-card-desc">Designed furniture collections for leading D2C brands. Created 2D &amp; 3D product designs in ceramic, brass, wood &amp; fabric — from concept through manufacturing and sampling.</p>
         </div>
         <div class="work-card-footer">
           <span class="work-meta">Jaipur · Furniture Design · 3D &amp; 2D</span>
           <div class="work-arrow">→</div>
         </div>
-      </div>
+      </a>
 
     </div>
   </div>
@@ -1061,7 +1142,23 @@
     navbar.classList.toggle('scrolled', window.scrollY > 40);
   });
 
-  // Filter tabs (visual only)
+  // Hamburger mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  });
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Filter tabs
   document.querySelectorAll('.filter-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1086,11 +1183,17 @@
     observer.observe(el);
   });
 
-  // Contact form (prevent default)
+  // Contact form — open mailto on send
   document.querySelector('.form-submit').addEventListener('click', (e) => {
     e.preventDefault();
+    const name = document.querySelector('input[placeholder="Rahul"]').value || 'there';
+    const email = document.querySelector('input[type="email"]').value;
+    const msg = document.querySelector('textarea').value;
+    if (email && msg) {
+      window.location.href = `mailto:khushboogupta.designs@gmail.com?subject=Project Enquiry from ${name}&body=${encodeURIComponent(msg)}%0A%0AFrom: ${encodeURIComponent(email)}`;
+    }
     const btn = e.target;
-    btn.textContent = '✓ Message Sent!';
+    btn.textContent = '✓ Opening your email...';
     btn.style.background = 'linear-gradient(135deg,#16A34A,#22C55E)';
     setTimeout(() => {
       btn.textContent = 'Send Message →';
